@@ -77,7 +77,7 @@ def test_get_items():
     assert records[0].get("year") == "2023"
     assert records[0].get("title") == "foo"
     assert records[0].get("info") == {"plot": "bar"}
-    assert records[0].get("timestampId") == 1621627443.8789062
+    assert records[0].get("timestampId") == 1621627443
 
 
 @mock_aws
@@ -126,7 +126,7 @@ def test_get_items_paginate():
     assert first_item.get("year") == "2023"
     assert first_item.get("title") == "foo_0"
     assert first_item.get("info") == {"plot": "bar"}
-    assert records[0].get("timestampId") == 1621627443.8789062
+    assert records[0].get("timestampId") == 1621627443
 
 
 @mock_aws
