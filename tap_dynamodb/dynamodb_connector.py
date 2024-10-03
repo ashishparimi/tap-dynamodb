@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import genson
 import ksuid
 import orjson
@@ -41,8 +43,8 @@ class DynamoDbConnector(AWSBotoConnector):
                 s = str(o)
                 if len(s) == 27:
                     try:
-                        decoded_ksuid = ksuid.Ksuid.from_base62(s)
-                        return decoded_ksuid.datetime
+                        decoded_ksuid = ksuid.KsuidMs.from_base62(s)
+                        return decoded_ksuid.timestamp
                     except ValueError:
                         return s
                 else:

@@ -77,7 +77,7 @@ def test_get_items():
     assert records[0].get("year") == "2023"
     assert records[0].get("title") == "foo"
     assert records[0].get("info") == {"plot": "bar"}
-    assert records[0].get("timestampId") == "2021-05-21T20:04:03+00:00"
+    assert records[0].get("timestampId") == 1621627443.8789062
 
 
 @mock_aws
@@ -126,7 +126,7 @@ def test_get_items_paginate():
     assert first_item.get("year") == "2023"
     assert first_item.get("title") == "foo_0"
     assert first_item.get("info") == {"plot": "bar"}
-    assert records[0].get("timestampId") == "2021-05-21T20:04:03+00:00"
+    assert records[0].get("timestampId") == 1621627443.8789062
 
 
 @mock_aws
@@ -149,7 +149,7 @@ def test_get_table_json_schema():
             "year": {"type": "string"},
             "title": {"type": "string"},
             "info": {"type": "object", "properties": {"plot": {"type": "string"}}},
-            "timestampId": {"type": "string"},
+            "timestampId": {"type": "number"},
             "results": {"type": "array"},
         },
     }
