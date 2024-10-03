@@ -2,7 +2,6 @@ import genson
 import ksuid
 import orjson
 from botocore.exceptions import ClientError
-from ksuid import Ksuid
 
 from tap_dynamodb.connectors.aws_boto_connector import AWSBotoConnector
 from tap_dynamodb.exception import EmptyTableException

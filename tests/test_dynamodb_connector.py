@@ -147,7 +147,7 @@ def test_get_table_json_schema():
             "year": {"type": "string"},
             "title": {"type": "string"},
             "info": {"type": "object", "properties": {"plot": {"type": "string"}}},
-            "timestampId": {"type": "number"},
+            "timestampId": {"type": "integer"},
             "results": {"type": "array"},
         },
     }
