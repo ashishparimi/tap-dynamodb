@@ -43,7 +43,7 @@ class DynamoDbConnector(AWSBotoConnector):
                 if len(s) == 27:
                     try:
                         decoded_ksuid = ksuid.Ksuid.from_base62(s)
-                        return decoded_ksuid.timestamp
+                        return decoded_ksuid.datetime
                     except ValueError:
                         return s
                 else:
