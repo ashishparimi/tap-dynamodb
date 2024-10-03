@@ -1,6 +1,8 @@
 import genson
+import ksuid
 import orjson
 from botocore.exceptions import ClientError
+from ksuid import Ksuid
 
 from tap_dynamodb.connectors.aws_boto_connector import AWSBotoConnector
 from tap_dynamodb.exception import EmptyTableException
@@ -22,14 +24,42 @@ class DynamoDbConnector(AWSBotoConnector):
 
     @staticmethod
     def _coerce_types(record):
-        return orjson.loads(
-            orjson.dumps(
-                record,
-                default=lambda o: str(o),
-                option=orjson.OPT_OMIT_MICROSECONDS,
-            ).decode("utf-8")
+        class CustomString(str):
+            pass
+
+        def wrap_strings(o):
+            if isinstance(o, dict):
+                return {k: wrap_strings(v) for k, v in o.items()}
+            elif isinstance(o, list):
+                return [wrap_strings(v) for v in o]
+            elif isinstance(o, str):
+                return CustomString(o)
+            else:
+                return o
+
+        def custom_encoder(o):
+            if isinstance(o, CustomString):
+                s = str(o)
+                if len(s) == 27:
+                    try:
+                        decoded_ksuid = ksuid.Ksuid.from_base62(s)
+                        return decoded_ksuid.timestamp
+                    except ValueError:
+                        return s
+                else:
+                    return s
+            else:
+                return str(o)
+
+        wrapped_record = wrap_strings(record)
+
+        json_bytes = orjson.dumps(
+            wrapped_record,
+            default=custom_encoder,
+            option=orjson.OPT_OMIT_MICROSECONDS | orjson.OPT_PASSTHROUGH_SUBCLASS,
         )
 
+        return orjson.loads(json_bytes)
     def _recursively_drop_required(self, schema: dict) -> None:
         """Recursively drop the required property from a schema.
 

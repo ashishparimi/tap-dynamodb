@@ -64,7 +64,8 @@ def test_get_items():
     # PREP
     moto_conn = boto3.resource("dynamodb", region_name="us-west-2")
     table = create_table(moto_conn, "table")
-    table.put_item(Item={"year": 2023, "title": "foo", "info": {"plot": "bar"}})
+    table.put_item(
+        Item={"year": 2023, "title": "foo", "info": {"plot": "bar"}, "timestampId": "1srOrx2ZWZBpBUvZwXKQmoEYga2"})
     # END PREP
 
     db_obj = DynamoDbConnector(SAMPLE_CONFIG)
@@ -74,6 +75,7 @@ def test_get_items():
     assert records[0].get("year") == "2023"
     assert records[0].get("title") == "foo"
     assert records[0].get("info") == {"plot": "bar"}
+    assert records[0].get("timestampId") == 1621627443
 
 
 @mock_aws
@@ -81,7 +83,8 @@ def test_get_items_w_kwargs():
     # PREP
     moto_conn = boto3.resource("dynamodb", region_name="us-west-2")
     table = create_table(moto_conn, "table")
-    table.put_item(Item={"year": 2023, "title": "foo", "info": {"plot": "bar"}})
+    table.put_item(
+        Item={"year": 2023, "title": "foo", "info": {"plot": "bar"}, "timestampId": "1srOrx2ZWZBpBUvZwXKQmoEYga2"})
     # END PREP
 
     db_obj = DynamoDbConnector(SAMPLE_CONFIG)
@@ -104,7 +107,8 @@ def test_get_items_paginate():
     table = create_table(moto_conn, "table")
     for num in range(5):
         table.put_item(
-            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"}}
+            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"},
+                  "timestampId": "1srOrx2ZWZBpBUvZwXKQmoEYga2"}
         )
     # END PREP
 
@@ -120,6 +124,7 @@ def test_get_items_paginate():
     assert first_item.get("year") == "2023"
     assert first_item.get("title") == "foo_0"
     assert first_item.get("info") == {"plot": "bar"}
+    assert records[0].get("timestampId") == 1621627443
 
 
 @mock_aws
@@ -129,7 +134,8 @@ def test_get_table_json_schema():
     table = create_table(moto_conn, "table")
     for num in range(5):
         table.put_item(
-            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"}}
+            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"},
+                  "timestampId": "1srOrx2ZWZBpBUvZwXKQmoEYga2",  "results" : []}
         )
     # END PREP
 
@@ -141,6 +147,8 @@ def test_get_table_json_schema():
             "year": {"type": "string"},
             "title": {"type": "string"},
             "info": {"type": "object", "properties": {"plot": {"type": "string"}}},
+            "timestampId": {"type": "number"},
+            "results": {"type": "array"},
         },
     }
 
@@ -152,7 +160,8 @@ def test_get_table_json_schema_w_kwargs():
     table = create_table(moto_conn, "table")
     for num in range(5):
         table.put_item(
-            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"}}
+            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"},
+                  "timestampId": "1srOrx2ZWZBpBUvZwXKQmoEYga2", "results" : []}
         )
     # END PREP
 
@@ -160,13 +169,14 @@ def test_get_table_json_schema_w_kwargs():
     schema = db_obj.get_table_json_schema(
         "table",
         5,
-        {"Select": "SPECIFIC_ATTRIBUTES", "ProjectionExpression": "title, info"},
+        {"Select": "SPECIFIC_ATTRIBUTES", "ProjectionExpression": "title, info, results"},
     )
     assert schema == {
         "type": "object",
         "properties": {
             "title": {"type": "string"},
             "info": {"type": "object", "properties": {"plot": {"type": "string"}}},
+            "results": {"type": "array"}
         },
     }
 
@@ -178,7 +188,8 @@ def test_get_table_key_properties():
     table = create_table(moto_conn, "table")
     for num in range(5):
         table.put_item(
-            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"}}
+            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"},
+                  "timestampId": "1srOrx2ZWZBpBUvZwXKQmoEYga2"}
         )
     # END PREP
 
@@ -201,7 +212,8 @@ def test_get_sample_records():
     table = create_table(moto_conn, "table")
     for num in range(5):
         table.put_item(
-            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"}}
+            Item={"year": 2023, "title": f"foo_{num}", "info": {"plot": "bar"},
+                  "timestampId": "1srOrx2ZWZBpBUvZwXKQmoEYga2"}
         )
     # END PREP
 
